@@ -1,2 +1,2 @@
-#!/bin/bas
-echo "$((2#$BINARY))"h
+#!/bin/bash
+echo "$((2#$BINARY))"
