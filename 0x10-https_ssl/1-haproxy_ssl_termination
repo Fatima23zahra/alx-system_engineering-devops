@@ -1,17 +1,23 @@
+global
+        log /dev/log    local0
+	stats socket /run/haproxy/admin.sock mode 660 level admin
+
 defaults
-    mode http
-    timeout client 15s
-    timeout connect 10s
-    timeout server 15s
-    timeout http-request 10s
+        log     global
+        mode    http
+        option  httplog
+	timeout connect  10s
+	timeout client  30s
+	timeout server  30s
 
-frontend iamitsfoss-frontend
-    bind *:80
-    bind *:443 ssl crt /etc/haproxy/certs/iamitsfoss.tech.pem
-    default_backend iamitsfoss-backend
+frontend th3gr00t-tech-frontend
+	bind *:80
+	bind *:443 ssl crt /etc/haproxy/certs/th3gr00t.tech.pem
+	http-request redirect scheme https unless { ssl_fc }
+	http-request set-header X-Forwarded-Proto https
+	default_backend th3gr00t-tech-backend
 
-backend iamitsfoss-backend
-    http-request redirect scheme https if  !{ ssl_fc }
-    balance roundrobin
-    server 130022-web-01 54.146.84.110:80 check
-    server 130022-web-02 100.26.156.138:80 check
+backend th3gr00t-tech-backend
+	balance roundrobin
+	server 453-web-01 35.243.128.200:80 check
+	server 453-web-02 3.239.120.96:80 check

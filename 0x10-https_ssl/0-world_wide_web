@@ -1,25 +1,16 @@
 #!/usr/bin/env bash
-# script to dig subdomain records for the domain specified
-# shellcheck disable=SC2027
-# shellcheck disable=SC2086
+# takes in a domain and subdomain as argument and print out the subdomain infos
 
-function get_a_records(){
-    if [[ -n "$2" ]]; then
-        response="$(dig "$2.$1" | grep -i -A1 "answer section" | tail -n 1)"
-        destination="$(echo "$response" | awk '{ print $5 }')"
-        record_type="$(echo "$response" | awk '{ print $4 }')"
-        echo  "The subdomain "$2" is a "$record_type" record and points to "$destination""
-
-    else
-        subdomains=(www lb-01 web-01 web-02)
-        for sub_d in "${subdomains[@]}"; do
-            response="$(dig "$sub_d.$1" | grep -i -A1 "answer section" | tail -n 1)"
-            destination="$(echo ""$response"" | awk '{ print $5 }')"
-            record_type="$(echo """$response""" | awk '{ print $4 }')"
-            echo "The subdomain ""$sub_d"" is a ""$record_type"" record and points to ""$destination"""
-
-        done
-    fi
- 
+output () {
+    dig "$1" | grep -A1 'ANSWER SECTION:' | sed -r "s/$1./$2/g" |  awk -F" " ' NR==2 { print "The subdomain " $1 " is a " $4 " record and points to "$5 }'
 }
-get_a_records "$1" "$2";
+
+if [ "$#" -eq 2 ]
+then
+    output "$2.$1" "$2"
+else
+    output "www.$1" 'www'
+    output "lb-01.$1" 'lb-01'
+    output "web-01.$1" 'web-01'
+    output "web-02.$1" 'web-02'
+fi
