@@ -1,25 +1,23 @@
-# Check the status of ufw to make sure it is active by running:
+echo -e "Updating\n"
 
-sudo ufw status
+sudo apt-get update
 
-# If ufw is not active, you can enable it by running:
-suo ufw enable
+echo -e "Installing UFW\n"
 
-# Set the default incoming policy to "deny" to block all incoming traffic by running:
-sudo ufw default deny incomming
+sudo apt-get install -y ufw
 
-# Set the default outgoing policy to "allow" to allow  all outgoing traffic by running:
+echo -e "configuring UFW...\n"
+
+# Allow Outgoing and Deny Incoming
+sudo ufw default deny incoming
 sudo ufw default allow outgoing
 
-# Allow incoming traffic on TCP ports 22, 443, and 80 by running:
+# Allow ports
+sudo ufw allow 22
+sudo ufw allow 80
+sudo ufw allow 443
 
-sudo ufw allow 22/tcp
-sudo ufw allow 443/tcp
-sudo ufw allow 80/tcp
-
-# Verify that the rules have been added by running:
-
-sudo ufw show added
-
-# Finally, enable ufw by running:
+# Enable Fire Wall
 sudo ufw enable
+
+echo -e "Process Completed.\n"
